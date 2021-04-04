@@ -1,0 +1,84 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_infomaster'
+             >
+                 <v-icon>
+                   mdi-plus
+                 </v-icon>
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='infoMasters'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_infomaster(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   infoMasters:[]
+                   ,
+                   headers:[
+
+                      {text:'information',value:'information',align:'center',sortable:true},
+                      {text:'value',value:'value',align:'center',sortable:true},
+                      {text:'year',value:'year',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.infoMasters = @Html.Raw(Json.Serialize(@ViewBag.infoMasters));
+                }//ecreated
+                ,
+                methods:{
+                    add_infomaster(){
+                        window.location= '/infomaster/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_infomaster(item){
+                        window.location = '/infomaster/edit/'+item.infoMasterId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

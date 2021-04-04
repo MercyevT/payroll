@@ -1,0 +1,558 @@
+<div id='app1' v-cloak>
+
+    <v-app style="background-color:#EDF1F2; ">
+        <v-main>
+          <table style="margin:20px"> 
+            <tr>
+              <td>
+                <div style="width: 200px;">
+             <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :return-value.sync="date"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="date"
+            label="date"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="date"
+          type="month"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="primary"
+            @@click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @@click="$refs.menu.save(date);selectdate()"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+      </div>
+              </td>
+              <td>
+                <v-btn
+              @@click='save()'
+             >
+                Save
+                 
+             </v-btn>
+              </td>
+            
+            <td>
+              <div>
+    <v-menu
+      v-model="menu2"
+      :close-on-content-click="false"
+      :nudge-width="300"
+      offset-y
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          
+          v-bind="attrs"
+          v-on="on"
+          rounded style="color:white; background-color:#8C001A; margin:10px"
+        >
+          Setting
+        </v-btn>
+      </template>
+
+      <v-card>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>Social security fund rate for employee :</v-list-item-title>   
+            <div style="position: absolute; left: 300px;">
+            <input type="number" style="border: 2px solid black;width:50px;" v-model="ssfe"> %
+            </div>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-title>Social security fund rate for company :</v-list-item-title>
+            <div style="position: absolute; left: 300px;">
+            <input type="number" style="border: 2px solid black;width:50px;" v-model="ssfm"> %
+            </div>
+          </v-list-item>
+        </v-list>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            text
+            @@click="menu2 = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @@click="menu2 = false;add_ssfund()"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-menu>
+  </div>
+            </td>
+            </tr> 
+          </table>
+              <v-card class="size">
+              <v-card-text style="background-color:#F5F5F5">
+                
+                <v-chart :options="option" style="width: 100%; height:500px;" :series="pieEs"/>
+                <v-chart :options="option" style="width: 100%; height:500px;"  :series="pieMs"/>
+            </v-card-text>
+            <br>
+             <v-data-table
+             :headers ='headers'
+             :items   ='ssfund'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_ssfund(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+
+@section scripts{
+    <script>
+     
+      Vue.component('v-chart', VueECharts);
+        var app;
+       
+            var component ={
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                  
+                  
+                    date: new Date().toISOString().substr(0, 7),
+                    menu: false,menu2:false,
+                   
+                   ssfunds:[],employee:[],salary:[],ssfund:[],ssfundDB:[]
+                   ,
+                   headers:[
+
+                      {text:'Employee Nmae',value:'employeeName',align:'left',sortable:true},      
+                      {text:'Employee Social Security Funds',value:'amountE',align:'left',sortable:true},
+                      {text:'Company Social Security Funds',value:'amountM',align:'left',sortable:true},
+                      {text:'Month',value:'month',align:'left',sortable:true},
+                      {text:'Year',value:'year',align:'left',sortable:true},
+					          ]
+                    ,
+                  pieEs:[]
+                  ,
+                  pieMs:[]
+                  ,
+                    ssfe:5,
+                    ssfm:5
+                   ,
+                   test:[]
+                  ,
+                    option: {
+                      
+                      toolbox: {
+                            show: true,
+                            feature: {         
+                                restore: {
+                                    show: true,
+                                    title: 'restore'
+                                },
+                                saveAsImage: {
+                                    show: true,
+                                    title: 'save image'
+                                }
+                            }
+                        },
+                        
+    
+                    title: [{
+                        text: 'The Pure Water & Ice Company Limited',
+                        subtext1:"",
+                        left: 'center',
+                        
+                        textStyle: {
+                                      fontWeight: "bold",
+                                      fontSize: 40,
+                                      
+                                    },
+                        subtextStyle: {
+                                      fontWeight: "bold",
+                                      
+                                      fontSize: 25,
+                                      color:"black"
+                                      
+                                    }
+                    }, {
+                        subtext: 'Employees',
+                        left: '25%',
+                        top: '90%',
+                        textAlign: 'center',
+                        subtextStyle: {
+                        fontWeight: "bold",
+                        fontSize: 25,
+                        color:"#1D1D1D"
+            
+          }
+                        
+                        
+                    }, {
+                        subtext: 'Company',
+                        left: '80%',
+                        top: '90%',
+                        textAlign: 'center',
+                        subtextStyle: {
+                        fontWeight: "bold",
+                        fontSize: 25,
+                        color:"#1D1D1D"
+            
+          }
+                    } ],
+                    series: [
+                    {
+                        type: 'pie',
+                        radius: '40%',
+                        center: [ '25%', '40%'],
+                        data: [],
+                        label: {
+                          position: 'outer',
+                          alignTo: 'amount',
+                          bleedMargin: 5
+                          
+                      },
+                        left: 0,
+                        right: '66.6667%',
+                        top: 0,
+                        bottom: 0
+                    }, {
+                        type: 'pie',
+                        radius: '40%',
+                        center: ['80%', '40%'],
+                        data: [],  
+                        label: {
+                            position: 'outer',
+                            alignTo: 'amount2',
+                            bleedMargin: 5
+                        },
+                        left: '33.3333%',
+                        right: '33.3333%',
+                        top: 0,
+                        bottom: 0
+                    }]
+                 }//eoption
+                  ,
+                  }//edata
+                  ,
+                    
+                created(){
+                  this.ssfunds = @Html.Raw(Json.Serialize(@ViewBag.ssfunds));
+                  this.employee = @Html.Raw(Json.Serialize(@ViewBag.employees));
+                  this.salary = @Html.Raw(Json.Serialize(@ViewBag.currentSalarys));
+                  var mound=this.date.split("-");
+                        var mound2={
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        }
+                  this.ssfund=this.ssfunds;
+                  console.log(this.salary)
+                  console.log(this.ssfund)
+                  for(i=0;i<this.employee.length;i++){
+                      this.ssfund[i].month=select(parseInt(this.ssfunds[i].month))
+                  }
+                  this.pieEs = @Html.Raw(Json.Serialize(@ViewBag.pieE));
+                  this.pieMs =@Html.Raw(Json.Serialize(@ViewBag.pieM));
+                  console.log(this.pieEs,'pieE');
+                  console.log(this.pieMs,'pieM');
+                  this.test= [{value: 108, name: '75'}]
+                  console.log(this.pieEs);
+                  console.log(this.test);
+                  this.option.title[0].subtext="Social Security Funds"+mound2.year+" "+select(mound2.month)
+                  this.option.series=[{
+                            type: 'pie',
+                        radius: '60%',
+                        center: [ '25%', '50%'],
+                        data: this.pieEs,
+                        label: {
+                formatter: '{hr|}\n  {b|{b}} ({per|{d}%}) ',
+                backgroundColor: '#F6F8FC',
+                borderColor: '#8C8D8E',
+                borderWidth: 1,
+                borderRadius: 4,
+                
+                rich: {
+                    
+                    hr: {
+                        borderColor: '#8C8D8E',
+                        width: '100%',
+                        borderWidth: 1,
+                        height: 0
+                    },
+                    b: {
+                        color: '#4C5058',
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        lineHeight: 33
+                    },
+                    per: {
+                        color: '#4C5058',
+                        
+                        padding: [3, 4],
+                        borderRadius: 4
+                    }
+                }
+            },
+                        left: 0,
+                        right: '66.6667%',
+                        top: 0,
+                        bottom: 0
+                            
+                        },
+                        {
+                        type: 'pie',
+                        radius: '60%',
+                        center: ['80%', '50%'],
+                        data: this.pieMs,  
+                        label: {
+                formatter: '{hr|}\n  {b|{b}} ({per|{d}%}) ',
+                backgroundColor: '#F6F8FC',
+                borderColor: '#8C8D8E',
+                borderWidth: 1,
+                borderRadius: 4,
+                
+                rich: {
+                    
+                    hr: {
+                        borderColor: '#8C8D8E',
+                        width: '100%',
+                        borderWidth: 1,
+                        height: 0
+                    },
+                    b: {
+                        color: '#4C5058',
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        lineHeight: 33
+                    },
+                    per: {
+                        color: '#4C5058',
+                        
+                        padding: [3, 4],
+                        borderRadius: 4
+                    }
+                }
+            },
+                        left: '33.3333%',
+                        right: '33.3333%',
+                        top: 0,
+                        bottom: 0
+                    }];  
+                     function select(x){
+                    if(x==1){
+                        return "January"
+                    }
+                    else if(x==2){
+                        return  "February"
+                    }
+                    else if(x==3){
+                        return  "March"
+                    }
+                    else if(x==4){
+                        return  "April"
+                    }
+                    else if(x==5){
+                        return  "May"
+                    }
+                    else if(x==6){
+                        return  "June"
+                    }
+                    else if(x==7){
+                        return  "July"
+                    }
+                    else if(x==8){
+                        return  "August"
+                    }
+                    else if(x==9){
+                        return  "September"
+                    }
+                    else if(x==10){
+                        return  "October"
+                    }
+                    else if(x==11){
+                        return  "November"
+                    }
+                    else if(x==12){
+                        return  "December"
+                    }
+
+                  }
+                 
+               
+                }//ecreated
+                ,
+                methods:{
+                    add_ssfund(){
+                        
+                        var mound=this.date.split("-");
+                        var mound2={
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        } 
+                        this.ssfundDB=[];
+                        for(i=0;i<this.employee.length;i++){                  
+                              this.filter1 =  this.salary.filter(x=>x.year==mound2.year)
+                                var p={
+                                        
+                                        employeeId              :   this.employee[i].employeeId,
+                                        amountE                 :   this.filter1[i].currentSalaryAmount*this.ssfe/100,
+                                        amountM	                :   this.filter1[i].currentSalaryAmount*this.ssfm/100,
+                                        month                   :   mound2.month,
+                                        year                    :   mound2.year,
+                                        ssfundMR                :   this.ssfm,
+                                        ssfundER                :  this.ssfe
+                                }  
+                            this.ssfundDB.push(p);
+                            
+                        }
+                        for(i=0;i<this.ssfundDB.length;i++){
+                            if(this.ssfundDB[i].amountE>(15000*this.ssfe/100)){
+                                this.ssfundDB[i].amountE=(15000*this.ssfe/100);
+                            }
+                        }
+                        for(i=0;i<this.ssfundDB.length;i++){
+                            if(this.ssfundDB[i].amountM>(15000*this.ssfm/100)){
+                                this.ssfundDB[i].amountM=(15000*this.ssfm/100);
+                            }
+                        }
+                        console.log(this.ssfundDB)
+                        
+                  
+                    
+                    }//ef
+                    ,
+                    save(){
+                        var url = '/ssfund/Edit';
+                        var param= this.ssfundDB;
+                        for(i=0;i<param.length;i++){
+                        $.post(url,param[i])
+                        .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/ssfund/index';
+                          }
+                          else{
+                            alert(res.exception);
+                          }
+                    });
+                        }
+                    }
+                    ,
+                    selectdate(){
+                      var mound=this.date.split("-");
+                        var mound2={
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        } 
+                        this.ssfund=[];
+                        
+                        this.ssfund=this.ssfunds.filter(x=>x.year==mound2.year&&x.month==mound2.month)
+                        for(i=0;i<this.ssfund.length;i++){
+                      this.ssfund[i].month=select(mound2.month)
+                  }
+
+                        function select(x){
+                    if(x==1){
+                        return "January"
+                    }
+                    else if(x==2){
+                        return  "February"
+                    }
+                    else if(x==3){
+                        return  "March"
+                    }
+                    else if(x==4){
+                        return  "April"
+                    }
+                    else if(x==5){
+                        return  "May"
+                    }
+                    else if(x==6){
+                        return  "June"
+                    }
+                    else if(x==7){
+                        return  "July"
+                    }
+                    else if(x==8){
+                        return  "August"
+                    }
+                    else if(x==9){
+                        return  "September"
+                    }
+                    else if(x==10){
+                        return  "October"
+                    }
+                    else if(x==11){
+                        return  "November"
+                    }
+                    else if(x==12){
+                        return  "December"
+                    }
+
+                  }
+                        
+
+                    }
+                     ,
+                     
+                    edit_ssfund(item){
+                        window.location = '/ssfund/edit/'+item.ssfundId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+                ,
+                
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

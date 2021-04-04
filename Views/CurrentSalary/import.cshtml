@@ -1,0 +1,83 @@
+<h4>Import Employee Salary</h4>
+<nav aria-label='breadcrumb'>
+    
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+        <v-file-input
+           label="file"
+            v-model="file1"
+        ></v-file-input>
+        <v-btn
+         @@click='upload'
+        >
+            <v-icon>
+              mdi-import
+            </v-icon>
+            import
+        </v-btn>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    file1:null
+                ,
+                   list1:[]
+                }
+                ,
+                created(){
+          
+                }
+                ,
+                methods:{
+                    upload(){
+        // Create an FormData object 
+        var data = new FormData();
+        data.append("file1",this.file1);
+        console.log(data);
+                        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "/CurrentSalary/importFile",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+
+                
+                console.log("SUCCESS : ", data);
+ 
+            },
+            error: function (e) {
+
+                $("#result").text(e.responseText);
+                console.log("ERROR : ", e);
+                $("#btnSubmit").prop("disabled", false);
+
+            }
+        });
+                    }//ef
+                }//emethod
+                ,
+                 computed:{
+
+                 }
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

@@ -1,0 +1,86 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_slipmaster'
+             >
+                 <v-icon>
+                   mdi-plus
+                 </v-icon>
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='slipMasters'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_slipmaster(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+<style>
+    
+</style>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   slipMasters:[]
+                   ,
+                   headers:[
+
+                      {text:'slipMasterName',value:'slipMasterName',align:'center',sortable:true},
+                      {text:'slipMasterType',value:'slipMasterType',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.slipMasters = @Html.Raw(Json.Serialize(@ViewBag.slipMasters));
+                }//ecreated
+                ,
+                methods:{
+                    add_slipmaster(){
+                        window.location= '/slipmaster/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_slipmaster(item){
+                        window.location = '/slipmaster/edit/'+item.slipMasterId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

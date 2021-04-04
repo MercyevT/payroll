@@ -1,0 +1,338 @@
+
+
+<div id='app1' v-cloak>
+
+    <v-app style="background-color:#EDF1F2;">
+        <v-main>
+                 <v-card>
+            <v-navigation-drawer
+                    permanent
+                    :mini-variant.sync="mini"
+                    fixed
+                    app
+                    style="background-color:#002952"
+                    >
+                    <v-list
+                    nav
+                    dense
+                    >
+                    <v-btn
+                    icon
+                    @@click.stop="mini = !mini"
+                    >
+                    <v-icon style="color:white">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-list-item @@click='all_ot' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-timer</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">OVERTIME</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='import_ot'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-import</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">IMPORT</v-list-item-title>
+                    </v-list-item>
+
+                     <v-list-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                               <v-list-item-icon>
+                              <v-icon style="color:white">mdi-file-document</v-icon>
+                              </v-list-item-icon>
+                            <v-list-item-title  style="color:white">OVERTIME RATE</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='all_rate'>
+                                <v-list-item-title  style="color:white">ALL RATE</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='add_rate'>
+                                <v-list-item-title style="color:white">NEW RATE</v-list-item-title>
+                            </v-list-item>
+                        </v-list-group>
+
+                </v-navigation-drawer>
+                </v-card>	
+
+            <v-card class="size">
+         <v-card-title class="white--text" style="background-color:#001f3d;">
+                        <h3 style="text-align: center">OVERTIME INFORMATION</h3>
+        </v-card-title>    
+        <br>
+            <v-container
+            >
+            <v-row
+             justify="space-around"
+            >
+            
+             <div style="width: 200px;">
+             <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :return-value.sync="date"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="date"
+            label="Date:"
+           
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="date"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="primary"
+            @@click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @@click="$refs.menu.save(date);add_date();"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+      </div>
+            <input class="text" v-model="lmin" placeholder="minute late allow">
+          
+             <v-btn
+              @@click='math'
+                class="white--text"
+            color="#002952"
+            rounded
+             >
+                 Mathing OT
+                 
+             </v-btn>
+             <v-btn
+              @@click='calOt'
+                class="white--text"
+            color="#002952"
+            rounded
+             >
+                 Calculator OT
+                 
+             </v-btn>
+             </v-row>
+             </v-container>
+             <v-data-table
+             :headers ='headers'
+             :items   ='oTs2'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                          class="white--text"
+                            color="#8C001A"
+                            rounded 
+                        @@click="edit_ot(item)"
+                        
+                        >
+                            Check    
+                        </v-btn>
+                </template>
+             </v-data-table>
+            </v-card>
+        </v-main>
+    </v-app>
+</div>
+<style>
+.navm{
+    color:white;
+}
+.v-text-field{
+    font-size:20px;
+}
+.size{
+    margin:20px;
+}
+</style>
+@section scripts{
+    <script>
+        var app;
+        
+            var component = {
+                
+                
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                
+                data:{
+                    
+                         absolute: true,
+                        overlay: false,
+                        
+                    
+              
+                   oTs:[],Clocking:[],clockings:[],ot:[],startTimes:[],startTime:[],check:[],month:[],oTcs:[],date2:[],oTs2:[],endtime:[],endtimes:[]
+                   ,
+                   headers:[
+
+                      {text:'Employee Name',value:'employeeName',align:'left',sortable:true},
+
+                      {text:'Time Im',value:'oTStart',align:'left',sortable:true},
+                      {text:'Time Out',value:'oTFinish',align:'left',sortable:true},
+                      {text:'Date',value:'oTDate',align:'left',sortable:true},
+                      {text:'Status',value:'oStatus',align:'left',sortable:true},
+                      {text:'Check',value:'actions',align:'left',sortable:true}
+
+					]
+                    ,
+                     date: new Date().toISOString().substr(0, 10),
+                    menu: false,
+                     lmin:null
+,
+mini:true,
+                    
+                }//edata    
+                
+                ,
+                created(){
+                    
+                   
+                  this.oTs = @Html.Raw(Json.Serialize(@ViewBag.oTs));
+                  this.oTs2 = this.oTs;
+                  this.clocking = @Html.Raw(Json.Serialize(@ViewBag.clockings));
+                  console.log(this.oTs)
+                  for(a=0;a<this.oTs.length;a++){
+                      this.startTimes.push(this.oTs[a].oTStart.split(":"));
+                      this.endtimes.push(this.oTs[a].oTFinish.split(":"));
+                    for(i=0;i<this.clocking.length;i++){
+                        if(this.oTs[a].employeeId==this.clocking[i].employeeId){
+                            if(this.oTs[a].oTStart.split(":")[0]==this.clocking[i].clockingIn.split(":")[0]
+                            &&this.oTs[a].oTFinish.split(":")[0]==this.clocking[i].clockingOut.split(":")[0]){
+                            this.startTime.push(this.clocking[i])
+                        }
+                    }
+                
+                    }     
+                  }                  
+
+                  console.log(this.clocking);
+                  console.log(this.oTs[0].oTStart.split(":")[0]);
+                  console.log(this.startTime);
+                  console.log(this.endtimes);
+                 
+                  
+                 
+                  
+                }//ecreated
+                ,
+                methods:{
+                    add_date(){
+                        console.log(this.date.split("-"))
+                        var mound=this.date.split("-");
+                        var mound2={
+                            day:parseInt(mound[2]),
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        }
+                        this.oTs2=this.oTs.filter(x=>x.oTDate==mound2.day+"/"+mound2.month+"/"+mound2.year)
+                        console.log(this.oTs2)
+                    }
+                    ,
+                    add_ot(){
+                        window.location= '/ot/add';
+                  
+                        
+                    }//ef
+                    ,
+                    math(){
+                            console.log(this.startTime)
+                            for(i=0;i<this.oTs.length;i++){
+                                for(a=0;a<this.startTime.length;a++){
+                                if(this.oTs[i].employeeId==this.startTime[a].employeeId&&parseInt(this.startTime[a].clockingIn.split(":")[1])<=parseInt(this.lmin)){
+                                       this.check={
+                                           oTId         :   this.oTs[i].oTId,
+                                           employeeId   :   this.oTs[i].employeeId,
+                                           oTStart      :   this.oTs[i].oTStart,
+                                           oTFinish     :   this.oTs[i].oTFinish,
+                                           oTDate       :   this.oTs[i].oTDate,
+                                           totalHour    :   this.oTs[i].totalHour,
+                                           oStatus      :   "complete"
+                                       }
+                                        var url = '/ot/update';
+                                        var param= this.check;
+                                         $.post(url,param)
+                                         .done(res =>{
+                                        if(res.error == -1){
+                                        window.location = '/ot/index';
+                                        }
+                                        else{
+                                        alert(res.exception);
+                                        }
+                                        });
+                               }
+                                }
+                           }
+                           console.log(this.check)
+                    }
+                    ,
+                    calOt(){
+                        var oTc = this.oTs.filter(x=>x.oStatus=="complete");
+                        
+                        for(i=0;i<oTc.length;i++){
+                            this.month.push(oTc[i].oTDate.split("/")); 
+                            var p = {
+                                oTId    :   oTc[i].oTId,
+                                month   :   this.month[i][1],
+                                value   :   oTc[i].totalHour*100,
+                                years   :   parseInt(this.month[i][2])
+                           }
+                           this.oTcs.push(p);
+                        }
+                        console.log(this.oTcs);
+                        window.location = '/otc/index';
+                        
+                    }
+                    ,
+                    edit_ot(item){
+                        window.location = '/ot/check/'+item.oTId;
+                    }
+                    ,
+                    import_ot(item){
+                        window.location= '/ot/importview';
+                    }
+                    ,
+                    all_ot(){
+                        window.location= '/ot/index';
+                    }
+                    ,
+                    all_rate(){
+                        window.location= '/otrate/index';
+                    }
+                    ,
+                    add_rate(){
+                        window.location= '/otrate/add';
+                    }
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+           
+    
+ 
+    </script>
+
+}

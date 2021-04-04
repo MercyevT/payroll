@@ -1,0 +1,86 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_managerinfo'
+             >
+                 <v-icon>
+                   mdi-plus
+                 </v-icon>
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='managerInfos'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_managerinfo(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   managerInfos:[]
+                   ,
+                   headers:[
+
+                      {text:'managerInfoFname',value:'managerInfoFname',align:'center',sortable:true},
+                      {text:'managerInfoLname',value:'managerInfoLname',align:'center',sortable:true},
+                      {text:'managerCZId',value:'managerCZId',align:'center',sortable:true},
+                      {text:'managerAddress',value:'managerAddress',align:'center',sortable:true},
+                      {text:'managerCode',value:'managerCode',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.managerInfos = @Html.Raw(Json.Serialize(@ViewBag.managerInfos));
+                }//ecreated
+                ,
+                methods:{
+                    add_managerinfo(){
+                        window.location= '/managerinfo/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_managerinfo(item){
+                        window.location = '/managerinfo/edit/'+item.managerInfoId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

@@ -1,0 +1,121 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_otc'
+             >
+                 Generate
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='oTCs'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_otc(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   oTCs:[],oTs:[],oTCss:[],month:[],OTrates:[]
+                   ,
+                   headers:[
+
+                      {text:'oTId',value:'oTId',align:'center',sortable:true},
+
+                      {text:'value',value:'value',align:'center',sortable:true},
+                      {text:'month',value:'month',align:'center',sortable:true},
+                      {text:'years',value:'years',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.oTCs     = @Html.Raw(Json.Serialize(@ViewBag.oTCs));
+                  this.oTs      = @Html.Raw(Json.Serialize(@ViewBag.oTs));
+                  this.OTrates  = @Html.Raw(Json.Serialize(@ViewBag.OTrates));
+                  
+                  
+                  console.log(this.oTCs)
+                  console.log(this.oTs)
+                  
+                        
+                        
+
+                }//ecreated
+                ,
+                methods:{
+                    add_otc(){
+                        this.oTCss=[];
+                        var oTc = this.oTs.filter(x=>x.oStatus=="complete");
+                        
+                        for(i=0;i<oTc.length;i++){
+                            this.month.push(oTc[i].oTDate.split("/")); 
+                            var p = {
+                                oTId    :   oTc[i].oTId,
+                                month   :   this.month[i][1],
+                                value   :   oTc[i].totalHour*(this.OTrates.filter(x=>x.departmentId==oTc[i].department && x.position==oTc[i].position)[0].value),
+                                years   :   parseInt(this.month[i][2])
+                           }
+                           this.oTCss.push(p);
+                        }
+                        
+                        var url = '/otc/edit';
+                        var param= this.oTCss;
+                        for(i=0;i<param.length;i++){
+                        $.post(url,param[i])
+                        .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/otc/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                        }
+                        
+                
+                        
+                    }//ef
+                    
+                    ,
+                    edit_otc(item){
+                        window.location = '/otc/edit/'+item.oTCId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

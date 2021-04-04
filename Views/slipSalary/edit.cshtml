@@ -1,0 +1,111 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/slipsalary/index'>slipsalary</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>edit</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+             <v-select return-object
+          v-model="select_employee"
+          :items="employees"
+          item-text="employeeId"
+          menu-props="auto"
+          single-line
+          label="employeeId"
+          show="employeeId" 
+           
+  ></v-select>
+
+ <v-select return-object
+          v-model="select_slipMaster"
+          :items="slipMasters"
+          item-text="slipMasterName"
+          menu-props="auto"
+          single-line
+          label="slipMasterId"
+          show="slipMasterName" 
+           
+  ></v-select>
+
+<v-text-field v-model="slipsalary.value" label="value" ></v-text-field>
+
+
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_slipsalary' color='yellow' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    slipsalary:{},
+                    employees:[] ,
+                    select_employee:{},
+                    slipMasters:[],
+                    select_slipMaster:{},
+
+                }//edata
+                ,
+                created(){
+                  this.slipsalary = @Html.Raw(Json.Serialize(@ViewBag.slipsalary));
+                  this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+                  this.select_employee = @Html.Raw(Json.Serialize(@ViewBag.select_employee));
+                  this.slipMasters = @Html.Raw(Json.Serialize(@ViewBag.slipMasters));
+                  this.select_slipMaster = @Html.Raw(Json.Serialize(@ViewBag.select_slipMaster));
+
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_slipsalary(){
+                    this.slipsalary.employeeId = this.select_employee.employeeId;
+                    this.slipsalary.slipMasterId = this.select_slipMaster.slipMasterId;
+
+                    var url = '/slipsalary/edit';
+                    var param= this.slipsalary;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/slipsalary/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

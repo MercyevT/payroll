@@ -1,0 +1,257 @@
+
+<div id='app1' v-cloak>
+    <v-app style="background-color:#EDF1F2;">
+         <v-main> 
+           <v-card>
+            <v-navigation-drawer
+                    permanent
+                    :mini-variant.sync="mini"
+                    fixed
+                    app
+                    style="background-color:#002952"
+                    >
+                    <v-list
+                    nav
+                    dense
+                    >
+                    <v-btn
+                    icon
+                    @@click.stop="mini = !mini"
+                    >
+                    <v-icon style="color:white">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-list-item @@click='all_info' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-view-list</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">ALL EMPLOYEES</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='add_page'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-account-multiple-plus</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">NEW EMPLOYEE</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='import_emp'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-import</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">IMPORT</v-list-item-title>
+                    </v-list-item>
+
+                    <!---list group--->
+                    <v-list-group
+                    prepend-icon="mdi-settings" 
+                    >
+                    <v-list-item slot="activator" >
+                        <v-list-item-title  class="navm">SETTING</v-list-item-title>
+                    </v-list-item>
+
+                      <v-list-group
+                            sub-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                            <v-list-item-title  class="navm">DEPARTMENTS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='dep_page'>
+                                <v-list-item-title  class="navm">ALL DEPARTMENTS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='dep_add_page'>
+                                <v-list-item-title  class="navm">NEW DEPARTMENT</v-list-item-title>
+                            </v-list-item>
+                        </v-list-group>
+
+                         <v-list-group
+                            sub-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                            <v-list-item-title  class="navm">BANK</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='bank_page'>
+                                <v-list-item-title  class="navm">ALL BANKS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='bank_add_page' >
+                                <v-list-item-title  class="navm">NEW BANK</v-list-item-title>                 
+                            </v-list-item>
+                        </v-list-group>
+
+                        </v-list-group>
+                </v-navigation-drawer>
+                </v-card>	
+               
+        
+          <v-card class="size">
+          <v-card-title class="dark--text" style="background-color:#001f3d;">
+                        <h3 style="text-align: center; color:white">EMPLOYEE DETAILS</h3>
+            </v-card-title>
+          <v-card-text>
+            <table class="table ">
+              <tr>
+                <td>First Name:<v-text-field v-model="employee.firstName"></v-text-field></td>
+                <td>Last Name:<v-text-field v-model="employee.lastName" ></v-text-field></td>
+              </tr>
+              <tr>
+                <td>Position:<v-text-field v-model="employee.position" ></v-text-field></td>
+                <td>Department:<v-select return-object
+          v-model="select_department"
+          :items="departments"
+          item-text="departmentName"
+          menu-props="auto"
+          single-line
+          label="departmentId"
+          show="departmentName" 
+           ></v-select>
+           </td>
+              </tr>
+              <tr>
+                <td>Address:<v-text-field v-model="employee.address"></v-text-field></td>
+                <td>Phone No.:<v-text-field v-model="employee.phone"></v-text-field></td>
+              </tr>
+              <tr>
+                <td>Email:<v-text-field v-model="employee.email" ></v-text-field></td>
+                <td>Bank:<v-select return-object
+                  v-model="select_bank"
+                  :items="banks"
+                  item-text="bankName"
+                  menu-props="auto"
+                  single-line
+                  label="bankId"
+                  show="bankName" 
+                  ></v-select>
+                </td>
+              </tr>
+              <tr>
+                <td>Bank Account:<v-text-field v-model="employee.bankAccount"></v-text-field></td>
+                <td>Citizen ID:<v-text-field v-model="employee.citizenID"></v-text-field></td>
+              </tr>
+              <tr>
+                <td>Passport No.:<v-text-field v-model="employee.passportNo"></v-text-field></td>
+              </tr>
+            </table>
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_employee'color='#001f3d' rounded>
+                <v-icon style="color:white;">
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+              <v-btn @@click='all_info' color='#8C001A' rounded>
+                <v-icon style="color:white;">
+                    mdi-keyboard-return
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+        </v-card> 
+         </v-main>
+    </v-app>
+</div>
+<style>
+  .v-text-field{
+    font-size:20px;
+  }
+  .table{
+    font-size: 15px
+  }
+  .head{
+    margin: 20px;
+    text-align: left;
+  }
+  .navm{
+    color:white;
+}
+.size{
+    margin:20px;
+}
+</style>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    employee:{}
+                    ,
+                    departments:[] ,
+                    select_department:{},
+                    banks:[] ,
+                    select_bank:{},
+                    mini:true,
+
+                }//edata
+                ,
+                created(){
+                  this.employee = @Html.Raw(Json.Serialize(@ViewBag.employee));
+                     this.departments = @Html.Raw(Json.Serialize(@ViewBag.departments));
+                  this.select_department = @Html.Raw(Json.Serialize(@ViewBag.select_department));
+                  this.banks = @Html.Raw(Json.Serialize(@ViewBag.banks));
+                  this.select_bank = @Html.Raw(Json.Serialize(@ViewBag.select_bank));
+
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_employee(){
+                   this.employee.departmentId = this.select_department.departmentId;
+this.employee.bankId = this.select_bank.bankId;
+
+                    var url = '/employee/edit';
+                    var param= this.employee;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/employee/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }
+                  ,
+                    add_page(){
+                        window.location= '/employee/add';     
+                    }//ef
+                    ,
+                    all_info(){
+                        window.location ='/employee/index';
+                    }//ef
+                    ,
+                   
+                    import_emp(){
+                        window.location='/employee/importview';
+                    }
+                    ,
+                    dep_page(){
+                        window.location='/department/index'
+                    }
+                    ,
+                    dep_add_page(){
+                        window.location='/department/add'
+                    }
+                    ,
+                    bank_page(){
+                        window.location='/bank/index'
+                    }
+                    ,
+                    bank_add_page(){
+                        window.location='/bank/add'
+                    }
+                    ,
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

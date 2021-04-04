@@ -1,0 +1,276 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+          <v-container>
+          <v-row justify="space-around">
+          
+            <div style="width: 200px;">
+             <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :return-value.sync="date"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="date"
+            label="Date:"
+           
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="date"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="primary"
+            @@click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @@click="$refs.menu.save(date);add_date();"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+      </div>
+      
+        <div>
+        Search By ID: <input type="text" v-model="searchby" style="border: 2px solid black;">
+      </div>
+      
+        <v-btn
+              @@click="search"
+             >
+                 search
+             </v-btn>
+      
+        <v-btn
+              @@click='Import'
+             >
+                 Import
+                 
+             </v-btn>
+             </v-row>
+             </v-container>
+             
+             <v-col cols="12">
+               <div id="Hsalary">
+            <v-card class="ma-2">
+                    <v-card-title class="primary white--text">
+                        <h3 style="text-align: center">Employees Salary History</h3>
+                    </v-card-title>
+                    <v-card-text>
+                    <v-chart :options="option" style="width: 100%; height: 500px;"/>
+                    </v-card-text>
+                </v-card>
+                </div>
+            </v-col>
+             <v-data-table
+             :headers ='headers'
+             :items   ='currentSalarysss'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_currentsalary(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+       Vue.component('v-chart', VueECharts);
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    
+              
+                   currentSalarys:[],employees:[],EmployeeSalaryMasters:[],currentSalaryss:[],filter1:[],Today:[],currentSalarysss:[]
+                   ,
+                   searchby:" "
+                   ,
+                   headers:[
+
+                      {text:'Employee Name',value:'employeeName',align:'left',sortable:true},
+
+                      {text:'Current Salary Amount',value:'currentSalaryAmount',align:'left',sortable:true},
+                      {text:'year',value:'year',align:'left',sortable:true},
+                      
+
+					]
+                    ,
+                    date: new Date().toISOString().substr(0, 10),
+                    menu: false,
+                    option : {
+                      toolbox: {
+                            show: true,
+                            feature: {         
+                                restore: {
+                                    show: true,
+                                    title: 'restore'
+                                },
+                                saveAsImage: {
+                                    show: true,
+                                    title: 'save image'
+                                }
+                            }
+                        },
+    xAxis: {
+        type: 'category',
+        data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [],
+        type: 'line'
+    }]
+}
+                }//edata
+                ,
+                created(){
+                  this.Today=this.date
+                  var mound=this.Today.split("-");
+                        var mound2={
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        }
+                        
+                  this.currentSalarys = @Html.Raw(Json.Serialize(@ViewBag.currentSalarys));
+                  this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+                  this.EmployeeSalaryMasters = @Html.Raw(Json.Serialize(@ViewBag.EmployeeSalaryMasters));
+                  this.currentSalaryss=this.currentSalarys;
+                  console.log(this.currentSalarys)
+                  function numberWithCommas(x) {
+                  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  }
+                  for(i=0;i<this.currentSalaryss.length;i++){
+                      this.currentSalaryss[i].currentSalaryAmount=numberWithCommas(this.currentSalaryss[i].currentSalaryAmount.toFixed(2))
+                  }
+                   
+                   this.currentSalarysss=this.currentSalaryss.filter(x=>x.year==parseInt(mound2.year));
+                   
+                   
+                  
+                    console.log((1000).toFixed(2));
+                  console.log()
+                  
+                  console.log(this.EmployeeSalaryMasters)
+                  
+                  
+                }//ecreated
+                ,
+                methods:{
+                    add_date(){
+                        
+                        var mound=this.date.split("-");
+                        var mound2={
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        } 
+                        
+                       
+                        
+                        
+                        
+              
+                        
+                    }
+                    ,
+                    add_currentsalary(){
+                        
+                        
+                        
+                    }//ef
+                    ,
+                    Import(){
+                        
+                        window.location = '/currentsalary/importview/';
+                        
+                    }
+                    ,
+                    search(){
+                      var mound=this.date.split("-");
+                        var mound2={
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        } 
+                      console.log(this.searchby)
+                      if(this.searchby==""||this.searchby==" "){
+                      this.currentSalarysss=this.currentSalaryss.filter(x=>x.year==parseInt(mound2.year))
+                      }
+                      else{
+                        this.currentSalarysss=this.currentSalaryss.filter(x=>x.employeeId==parseInt(this.searchby))
+                      }
+                     
+                      console.log(parseInt(this.currentSalarysss[0].currentSalaryAmount.replace(",", "")))
+                      var x=[];
+                      var y=[];
+                      for(i=0;i<this.currentSalarysss.length;i++){  
+                          x.push(this.currentSalarysss[i].year);
+                          y.push(parseInt(this.currentSalarysss[i].currentSalaryAmount.replace(",", "")))
+                      }
+                      console.log(x)
+                      console.log(y)
+                      this.option.xAxis.data = x;
+                    this.option.series=[{
+                            name: 'value',
+                            type: 'line',
+                            label: {
+                show: true,
+                position: 'top'
+            },
+                            data: y,
+                            itemStyle: { color: '#4594E3'
+                            }
+                        },
+                        ]
+
+                    }
+                    ,
+                    edit_currentsalary(item){
+                        window.location = '/currentsalary/edit/'+item.currentSalaryId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

@@ -1,0 +1,84 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_otrate'
+             >
+                 <v-icon>
+                   mdi-plus
+                 </v-icon>
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='oTrates'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_otrate(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   oTrates:[]
+                   ,
+                   headers:[
+
+                      {text:'departmentId',value:'departmentId',align:'center',sortable:true},
+                      {text:'position',value:'position',align:'center',sortable:true},
+                      {text:'value',value:'value',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.oTrates = @Html.Raw(Json.Serialize(@ViewBag.oTrates));
+                }//ecreated
+                ,
+                methods:{
+                    add_otrate(){
+                        window.location= '/otrate/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_otrate(item){
+                        window.location = '/otrate/edit/'+item.oTrateId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

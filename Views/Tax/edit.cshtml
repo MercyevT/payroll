@@ -1,0 +1,98 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/tax/index'>tax</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>edit</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+             <v-select return-object
+          v-model="select_employee"
+          :items="employees"
+          item-text="employeeId"
+          menu-props="auto"
+          single-line
+          label="employeeId"
+          show="employeeId" 
+           
+  ></v-select>
+
+<v-text-field v-model="tax.netSalary		" label="netSalary" ></v-text-field>
+
+<v-text-field v-model="tax.taxY			" label="taxY" ></v-text-field>
+
+<v-text-field v-model="tax.year			" label="tear" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_tax' color='yellow' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    tax:{}
+                    ,
+                    employees:[] ,
+select_employee:{},
+
+                }//edata
+                ,
+                created(){
+                  this.tax = @Html.Raw(Json.Serialize(@ViewBag.tax));
+                     this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+this.select_employee = @Html.Raw(Json.Serialize(@ViewBag.select_employee));
+
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_tax(){
+                   this.tax.employeeId = this.select_employee.employeeId;
+
+                    var url = '/tax/edit';
+                    var param= this.tax;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/tax/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

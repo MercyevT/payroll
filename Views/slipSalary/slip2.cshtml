@@ -1,0 +1,172 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title class="justify-center" style="font-size: 30px;">
+              Salary Slip
+          </v-card-title>
+          <v-card-text>
+              <table  style="font-size: 25px;"> 
+              <tr>
+                  <td class="employee">Employee Name</td>
+                  <td class="employee">: {{employee.employeeName}}</td>
+              </tr>
+              <tr>
+                  <td class="employee">Department</td>
+                  <td class="employee">: {{employee.departmentName}}</td>
+              </tr>
+              <tr>
+                  <td class="employee">Position</td>
+                  <td class="employee">: {{employee.position}}</td>
+              </tr>
+              </table>
+          </v-card-text>
+          <table class="table">
+              
+              <thead>
+                  <th>Earning</th>
+                  <th>value</th>
+                  <th>Deduction</th>
+                  <th>value</th>
+              </thead>
+              <tbody>
+                  <td class="data2">  
+                  <table >
+                      <tr v-for="Earnings in Earning">
+                          <td>{{Earnings.title}}</td>
+                      </tr>
+                  </table>
+                  </td>
+                  <td class="data2">  
+                  <table>
+                      <tr v-for="Earnings in Earning">
+                          <td>{{Earnings.value}}</td>
+                      </tr>
+                  </table>
+                  </td>
+                  <td class="data2">  
+                  <table >
+                      <tr v-for="Deductions in Deduction">
+                          <td>{{Deductions.title}}</td>
+                      </tr>
+                  </table>
+                  </td>  
+                  <td class="data2">  
+                  <table>
+                      <tr v-for="Deductions in Deduction">
+                          <td>{{Deductions.value}}</td>
+                      </tr>
+                  </table>
+                  </td>    
+              </tbody>    
+          </table>
+          <v-card-actions>
+             <v-btn @@click='edit_slipsalary' >
+                Back
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+<style>
+    td.employee {
+  height: 50px;
+}
+    td.data2{
+         margin: 0;
+    padding: 0;
+    border: 0;
+    }
+</style>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    
+                    employees:{},employee:[],departments:[],all:[],Earning:[],valueE:[],Deduction:[],valueD:[],slip:[]
+                    
+                    
+
+                }//edata
+                ,
+                created(){
+                  var Date2 = new Date();
+                  this.ot           = @Html.Raw(Json.Serialize(@ViewBag.OTCs));
+                  this.tax          = @Html.Raw(Json.Serialize(@ViewBag.taxs));
+                  this.salary       = @Html.Raw(Json.Serialize(@ViewBag.CurrentSalarys));
+                  this.ssf          = @Html.Raw(Json.Serialize(@ViewBag.ssfunds));
+                  this.slipMaster   = @Html.Raw(Json.Serialize(@ViewBag.slipMasters));
+                  this.employees    = @Html.Raw(Json.Serialize(@ViewBag.employee));
+                  this.departments  = @Html.Raw(Json.Serialize(@ViewBag.departments));
+                  console.log(Date2)
+                  this.employee     =  {
+                        employeeId      : this.employees.employeeId,
+                        employeeName    : this.employees.firstName+" "+this.employees.lastName,
+                        departmentName  : this.departments.filter(x=>x.departmentId==this.employees.departmentId)[0].departmentName,
+                        position        : this.employees.position 
+                  }
+                  if(this.ot[0]==null){
+                     this.all.push(this.tax[0],this.salary[0],this.ssf[0])
+                  }
+                  else{
+                  this.all.push(this.ot[0],this.tax[0],this.salary[0],this.ssf[0])
+                  }
+                 for(i=0;i<this.all.length;i++){
+                      for(a=0;a<this.slipMaster.length;a++){
+                        if(this.all[i].slipMasterId==this.slipMaster[a].slipMasterId){
+                            if(this.slipMaster[a].slipMasterType==1){
+                                 this.Earning.push({
+                                     title : this.slipMaster.filter(x=>x.slipMasterId==this.all[i].slipMasterId)[0].slipMasterName,
+                                     value : this.all[i].value
+                                 })
+                            }
+                            else{
+                                
+                                this.Deduction.push({
+                                     title : this.slipMaster.filter(x=>x.slipMasterId==this.all[i].slipMasterId)[0].slipMasterName,
+                                     value : this.all[i].value
+                                 })
+                                
+                            }
+                        }
+                      }
+                  }
+                  
+                  console.log(this.Earning)
+                  console.log(this.slip)
+                  
+                  
+                  //this.select_employee = @Html.Raw(Json.Serialize(@ViewBag.select_employee));
+                  //this.slipMasters = @Html.Raw(Json.Serialize(@ViewBag.slipMasters));
+                  //this.select_slipMaster = @Html.Raw(Json.Serialize(@ViewBag.select_slipMaster));
+
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_slipsalary(){
+                    window.location= '/slipsalary/index';
+                    
+                  }//emethod
+                  
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

@@ -1,0 +1,92 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             
+             <div>
+        Search By ID: <input type="text" v-model="searchby" style="border: 2px solid black;">
+        </div>
+        <v-btn
+              @@click="search"
+             >
+                 search
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='employeeInfos'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_employeeinfo(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   employeeInfos:[],searchby:"",employeeInfo:[]
+                   ,
+                   headers:[
+
+                      {text:'Employee Name',value:'employeeName',align:'center',sortable:true},
+
+                      {text:'infomation',value:'infoMasterName',align:'center',sortable:true},
+
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.employeeInfo = @Html.Raw(Json.Serialize(@ViewBag.employeeInfos));
+                  this.employeeInfos=this.employeeInfo
+                  console.log(this.employeeInfos)
+                }//ecreated
+                ,
+                methods:{
+                    add_employeeinfo(){
+                        window.location= '/employeeinfo/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_employeeinfo(item){
+                        window.location = '/employeeinfo/edit/'+item.employeeInfoId;
+                    }
+                    ,
+                    search(){
+                        this.employeeInfos=this.employeeInfo.filter(x=>x.employeeId==this.searchby)
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

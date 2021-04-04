@@ -1,0 +1,80 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/infomaster/index'>infomaster</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>create</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field v-model="infomaster.information" label="information" ></v-text-field>
+
+<v-text-field v-model="infomaster.value				" label="value" ></v-text-field>
+
+<v-text-field v-model="infomaster.year				" label="year" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='add_infomaster' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    infomaster:{}
+                    ,
+                    
+                }//edata
+                ,
+                created(){
+                     
+                }//ecreated
+                ,
+                methods:{
+                  add_infomaster(){
+                   
+                    var url = '/infomaster/add';
+                    var param= this.infomaster;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/infomaster/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

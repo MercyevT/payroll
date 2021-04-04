@@ -1,0 +1,100 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/clocking/index'>clocking</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>create</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+             <v-select return-object
+          v-model="select_employee"
+          :items="employees"
+          item-text="employeeId"
+          menu-props="auto"
+          single-line
+          label="employeeId"
+          show="employeeId" 
+           
+  ></v-select>
+
+<v-text-field v-model="clocking.clockingIn" label="clockingIn" ></v-text-field>
+
+<v-text-field v-model="clocking.breakIn" label="breakIn" ></v-text-field>
+
+<v-text-field v-model="clocking.breakOut" label="breakOut" ></v-text-field>
+
+<v-text-field v-model="clocking.clockingOut" label="clockingOut" ></v-text-field>
+
+<v-text-field v-model="clocking.Date" label="Date" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='add_clocking' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    clocking:{}
+                    ,
+                    employees:[] ,
+select_employee:{},
+
+                }//edata
+                ,
+                created(){
+                     this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+this.select_employee = this.employees[0];
+
+                }//ecreated
+                ,
+                methods:{
+                  add_clocking(){
+                   this.clocking.employeeId = this.select_employee.employeeId;
+
+                    var url = '/clocking/add';
+                    var param= this.clocking;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/clocking/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

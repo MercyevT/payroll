@@ -1,0 +1,82 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/ssfrate/index'>ssfrate</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>edit</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field v-model="ssfrate.SocialSecurityFundRate" label="ssfrate" ></v-text-field>
+
+<v-text-field v-model="ssfrate.month					" label="month" ></v-text-field>
+
+<v-text-field v-model="ssfrate.year						" label="year" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_ssfrate' color='yellow' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    ssfrate:{}
+                    ,
+                    
+                }//edata
+                ,
+                created(){
+                  this.ssfrate = @Html.Raw(Json.Serialize(@ViewBag.ssfrate));
+                     
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_ssfrate(){
+                   
+                    var url = '/ssfrate/edit';
+                    var param= this.ssfrate;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/ssfrate/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

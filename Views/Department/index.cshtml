@@ -1,0 +1,82 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_department'
+             >
+                 <v-icon>
+                   mdi-plus
+                 </v-icon>
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='departments'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_department(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   departments:[]
+                   ,
+                   headers:[
+
+                      {text:'departmentName',value:'departmentName',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.departments = @Html.Raw(Json.Serialize(@ViewBag.departments));
+                }//ecreated
+                ,
+                methods:{
+                    add_department(){
+                        window.location= '/department/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_department(item){
+                        window.location = '/department/edit/'+item.departmentId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

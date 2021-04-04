@@ -1,0 +1,80 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/slipmaster/index'>slipmaster</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>edit</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field v-model="slipmaster.slipMasterName" label="slipmaster" ></v-text-field>
+
+<v-text-field v-model="slipmaster.slipMasterType" label="slipMasterType" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_slipmaster' color='yellow' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    slipmaster:{}
+                    ,
+                    
+                }//edata
+                ,
+                created(){
+                  this.slipmaster = @Html.Raw(Json.Serialize(@ViewBag.slipmaster));
+                     
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_slipmaster(){
+                   
+                    var url = '/slipmaster/edit';
+                    var param= this.slipmaster;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/slipmaster/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

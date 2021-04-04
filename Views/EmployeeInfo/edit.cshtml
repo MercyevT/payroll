@@ -1,0 +1,108 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/employeeinfo/index'>employeeinfo</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>edit</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+             <v-select return-object
+          v-model="select_employee"
+          :items="employees"
+          item-text="employeeId"
+          menu-props="auto"
+          single-line
+          label="employeeId"
+          show="employeeId" 
+           
+  ></v-select>
+
+ <v-select return-object
+          v-model="select_InfoMaster"
+          :items="InfoMasters"
+          item-text="InfoMasterId"
+          menu-props="auto"
+          single-line
+          label="InfoMasterId"
+          show="InfoMasterId" 
+           
+  ></v-select>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_employeeinfo' color='yellow' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    employeeinfo:{}
+                    ,
+                    employees:[] ,
+select_employee:{},
+InfoMasters:[] ,
+select_InfoMaster:{},
+
+                }//edata
+                ,
+                created(){
+                  this.employeeinfo = @Html.Raw(Json.Serialize(@ViewBag.employeeinfo));
+                     this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+this.select_employee = @Html.Raw(Json.Serialize(@ViewBag.select_employee));
+this.InfoMasters = @Html.Raw(Json.Serialize(@ViewBag.InfoMasters));
+this.select_InfoMaster = @Html.Raw(Json.Serialize(@ViewBag.select_InfoMaster));
+
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_employeeinfo(){
+                   this.employeeinfo.employeeId = this.select_employee.employeeId;
+this.employeeinfo.infoMasterId = this.select_infoMaster.infoMasterId;
+
+                    var url = '/employeeinfo/edit';
+                    var param= this.employeeinfo;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/employeeinfo/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

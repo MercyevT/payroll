@@ -1,0 +1,314 @@
+
+<div id='app1' v-cloak >
+    <v-app style="background-color:#EDF1F2;"> 
+        <v-main>
+            <v-card>
+            <v-navigation-drawer
+                    permanent
+                    :mini-variant.sync="mini"
+                    fixed
+                    app
+                    style="background-color:#002952"
+                    >
+                    <v-list
+                    nav
+                    dense
+                    >
+                    <v-btn
+                    icon
+                    @@click.stop="mini = !mini"
+                    >
+                    <v-icon style="color:white">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-list-item @@click='all_info' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-view-list</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">ALL EMPLOYEES</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='add_page'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-account-multiple-plus</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">NEW EMPLOYEE</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='import_emp'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-import</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">IMPORT</v-list-item-title>
+                    </v-list-item>
+
+                    <!---list group--->
+                    <v-list-group
+                    prepend-icon="mdi-settings" 
+                    >
+                    <v-list-item slot="activator" >
+                        <v-list-item-title  class="navm">SETTING</v-list-item-title>
+                    </v-list-item>
+
+                      <v-list-group
+                            sub-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                            <v-list-item-title  class="navm">DEPARTMENTS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='dep_page'>
+                                <v-list-item-title  class="navm">ALL DEPARTMENTS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='dep_add_page'>
+                                <v-list-item-title  class="navm">NEW DEPARTMENT</v-list-item-title>
+                            </v-list-item>
+                        </v-list-group>
+
+                         <v-list-group
+                            sub-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                            <v-list-item-title  class="navm">BANK</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='bank_page'>
+                                <v-list-item-title  class="navm">ALL BANKS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='bank_add_page' >
+                                <v-list-item-title  class="navm">NEW BANK</v-list-item-title>                 
+                            </v-list-item>
+                        </v-list-group>
+
+                        </v-list-group>
+                </v-navigation-drawer>
+                </v-card>	
+
+            <div class="size">         
+            
+            <v-row>
+            <v-col cols="12">
+            <v-card class="ma-2">
+                    <v-card-title class="dark--text" style="background-color:#001f3d;">
+                        <h3 style="text-align: center; color:white">Employees By Department</h3>
+                    </v-card-title>
+                    <v-card-text style="background-color:White">
+                    <v-chart :options="plot" style="width: 100%; height: 700px; "/>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+          </v-row>
+          
+           <br>
+           <v-card-title class="white--text" style="background-color:#001f3d;">
+                        <h3 style="text-align: center">Employee List</h3>
+                    </v-card-title>
+             <v-data-table
+             :headers ='headers'
+             :items   ='employees'
+              class='elevation-1'
+             />
+                
+                <template v-slot:item.names='{item}'>
+                        <td
+                        @@click="edit_employee(item)"
+                        >
+                        {{item.employeeName}}  
+                        </td >
+                </template>
+             </v-data-table>
+         </div>
+     
+        </v-main>
+    </v-app>
+</div>
+<style>
+.navm{
+    color:white;
+}
+.size{
+    margin:20px;
+}
+  .v-text-field{
+    font-size:20px;
+  }
+</style>
+@section scripts{
+    <script>
+        Vue.component('v-chart', VueECharts);
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   employees:[]
+                   ,
+                   headers:[
+
+                      {text:'EMPLOYEE NAME',value:'names',align:'left',sortable:true},
+                      {text:'POSITION',value:'position',align:'left',sortable:true},
+                      {text:'DEPARTMENT',value:'departmentName',align:'left',sortable:true},
+                      {text:'PHONE',value:'phone',align:'left',sortable:true},
+                      {text:'EMAIL',value:'email',align:'left',sortable:true},
+                      
+
+					]
+                    ,
+                    plot: {
+                        toolbox: {
+                            show: true,
+                            left: '90%',
+                            feature: {
+
+                                restore: {
+                                    show: true,
+                                    title: 'restore',
+                                    
+                                },
+                                saveAsImage: {
+                                    show: true,
+                                    
+                                    title: 'save image'
+                                },
+                                
+                            }
+                        },
+                        title: {
+                            text: 'The Pure Water & Ice Company Limited',
+                            subtext:'Employees Categorize By Department',
+                             left: 'center',
+                             
+                            
+                            textStyle: {
+                                      fontWeight: "bold",
+                                      fontSize: 40,
+
+                                    },
+                        subtextStyle: {
+                                      fontWeight: "bold",
+                                      
+                                      fontSize: 25,
+                                      color:"black"
+                                      
+                                    }
+                        },
+                        
+                        tooltip: {},
+                        legend: {
+                            data: ['Employees'],
+                            
+                           
+                            
+                        },
+                        
+                        xAxis: {
+                            data: [],
+                            
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#4b2c20',
+                                }
+                            },
+                    
+                            axisTick: {
+                                show: false
+                                 
+                            },
+                            axisLine: {
+                                show: false,
+                               
+                            },
+                            z: 10
+                            
+                        },
+                        yAxis: [
+                            {
+                                type: 'value',
+                              
+                               
+                            }
+                        ],
+                        grid: {
+        top: '20%'
+    },  
+                    }
+                    ,
+                    mini:true
+
+                }//edata
+                ,
+                created(){
+                    $.get('/employee/report1').done(res => {
+                    console.log(res);
+                    this.plot.xAxis.data = res.x_data;
+                    this.plot.series=[{
+                            name: 'value',
+                            type: 'bar',
+                             
+                            
+                            label: {
+                show: true,
+                position: 'top'
+            },
+                            data: res.y_data,
+                            itemStyle: { color: '#8C001A'
+                            
+                            }
+                        },
+                       
+                        ];
+                        
+                    console.log(this.plot);
+                        
+           });
+                  this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+                  console.log(this.employees)
+
+                }//ecreated
+                ,
+                methods:{
+                    add_page(){
+                        window.location= '/employee/add';     
+                    }//ef
+                    ,
+                    all_info(){
+                        window.location ='/employee/index';
+                    }//ef
+                    ,
+                   
+                    import_emp(){
+                        window.location='/employee/importview';
+                    }
+                    ,
+                    dep_page(){
+                        window.location='/department/index'
+                    }
+                    ,
+                    dep_add_page(){
+                        window.location='/department/add'
+                    }
+                    ,
+                    bank_page(){
+                        window.location='/bank/index'
+                    }
+                    ,
+                    bank_add_page(){
+                        window.location='/bank/add'
+                    }
+                    ,
+                    edit_employee(item){
+                        window.location = '/employee/edit/'+item.employeeId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

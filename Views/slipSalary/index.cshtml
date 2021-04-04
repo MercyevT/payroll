@@ -1,0 +1,426 @@
+
+<div id='app1' v-cloak>
+    <v-app style="background-color:#EDF1F2;">
+        <v-main>
+          <v-card>
+            <v-navigation-drawer
+                    permanent
+                    :mini-variant.sync="mini"
+                    fixed
+                    app
+                    style="background-color:#002952"
+                    >
+                    <v-list
+                    nav
+                    dense
+                    >
+                    <v-btn
+                    icon
+                    @@click.stop="mini = !mini"
+                    >
+                    <v-icon style="color:white">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-list-group
+                            no-action
+                        >
+                        <v-list-item slot="activator">
+                               <v-list-item-icon>
+                              <v-icon style="color:white">mdi-file-multiple</v-icon>
+                              </v-list-item-icon>
+                            <v-list-item-title  style="color:white">Report</v-list-item-title>
+                            </v-list-item>
+                    <v-list-item @@click='PNDkor' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-document</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">PND1 KOR</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='PND'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-document</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">PND1</v-list-item-title>
+                    </v-list-item>
+                     <v-list-item @@click='v50' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-document</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">50 TAWI</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='Bankreport'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-document</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">BANK DOCUMENT</v-list-item-title>
+                    </v-list-item>
+                     <v-list-item @@click='ssoreport' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-document</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">SOCIAL SECURITY FUNDS</v-list-item-title>
+                    </v-list-item>
+                    </v-list-group>
+
+                    <v-list-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                               <v-list-item-icon>
+                              <v-icon style="color:white">mdi-file-multiple</v-icon>
+                              </v-list-item-icon>
+                            <v-list-item-title  style="color:white">SLIP MASTER</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='all_slip_mas'>
+                                <v-list-item-title  style="color:white">ALL SLIP MASTER</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='add_slip_mas'>
+                                <v-list-item-title style="color:white">NEW SLIP MASTER</v-list-item-title>
+                            </v-list-item>
+                        </v-list-group>
+                         <v-list-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                               <v-list-item-icon>
+                              <v-icon style="color:white">mdi-home-modern</v-icon>
+                              </v-list-item-icon>
+                            <v-list-item-title  style="color:white">COMPANY</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='com'>
+                                <v-list-item-title  style="color:white">COMPANY INFORMATION</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='add_com'>
+                                <v-list-item-title style="color:white">NEW INFORMATION</v-list-item-title>
+                            </v-list-item>
+                        </v-list-group>
+                </v-navigation-drawer>
+                </v-card>	
+            <table>
+                <tr>
+                    <td>
+                       <div style="width: 200px;">
+             <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :return-value.sync="date"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="date"
+            label="Date:"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="date"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="primary"
+            @@click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @@click="$refs.menu.save(date);selectdate()"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+      </div> 
+                    </td>
+                    <td>
+                        <v-btn
+            
+            @@click="save"
+          >
+            Save
+          </v-btn>
+                    </td>
+                    
+                </tr>
+                
+            </table>
+             
+             <v-data-table
+             :headers ='headers'
+             :items   ='slipSalary'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="detail_slip(item)"
+                        >
+                            datail
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    
+                   slipSalarys:[],tax:[],salary:[],ot:[],ssf:[],employee:[],all:[],slipMaster:[],earning:[],deduction:[],totalearn:[],totaldeduct:[],slip:[],et:[],sender:[],slipSalary:[]
+                   ,
+                   headers:[
+                      {text:'Employee Name',value:'employeeName',align:'left',sortable:true},
+                      {text:'Total Earning',value:'totalearning',align:'right',sortable:true},
+                      {text:'Total Deduction',value:'totaldeducttion',align:'right',sortable:true},
+                      {text:'Net Salary',value:'netSalary',align:'right',sortable:true},
+                      {text:'Slip datail',value:'actions',align:'right',sortable:true},
+
+					],
+                    date: new Date().toISOString().substr(0, 10),
+                    menu: false,
+                    mini:true,
+                    
+                    
+                }//edata
+                ,
+                created(){
+                    console.log(Math.ceil(11/2))
+                  this.slipSalarys = @Html.Raw(Json.Serialize(@ViewBag.slipSalarys));
+                  this.ot  = @Html.Raw(Json.Serialize(@ViewBag.OTCs));
+                  this.tax  = @Html.Raw(Json.Serialize(@ViewBag.taxs));
+                  this.salary  = @Html.Raw(Json.Serialize(@ViewBag.CurrentSalarys));
+                  this.ssf  = @Html.Raw(Json.Serialize(@ViewBag.ssfunds));
+                  this.employee  = @Html.Raw(Json.Serialize(@ViewBag.employee));
+                  this.slipMaster = @Html.Raw(Json.Serialize(@ViewBag.slipMasters));
+                  console.log(this.slipSalarys)
+                  var mound=this.date.split("-");
+                        var mound2={
+                            day:parseInt(mound[2]),
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        }
+                        function numberWithCommas(x) {
+                  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  }
+                   this.slipSalary=this.slipSalarys.filter(x=>x.month==mound2.month&&x.year==mound2.year)
+                   for(i=0;i<this.slipSalary.length;i++){
+                    this.slipSalary[i].totalearning=numberWithCommas((this.slipSalary[i].totalearning).toFixed(2))
+                    this.slipSalary[i].totaldeducttion=numberWithCommas((this.slipSalary[i].totaldeducttion).toFixed(2))
+                    this.slipSalary[i].netSalary=numberWithCommas((this.slipSalary[i].netSalary).toFixed(2))
+                   }
+                  console.log(this.slipSalarys)
+                  this.tax.sort((a,b) => { 
+					              if(a.employeeId > b.employeeId) return 1;
+					              else if(a.employeeId == b.employeeId) return 0; 
+					              else return -1;
+				                });
+                        this.tax=this.tax.filter(x=>x.year==mound2.year)
+                        this.salary=this.salary.filter(x=>x.year==mound2.year)
+                        console.log(this.salary)
+                    for(i=0;i<this.tax.length;i++){
+                  if(this.tax[i].value!==0 && mound2.month==12){
+                      var a = this.tax[i].value
+                    this.tax[i].value= a-(Math.floor(this.tax[i].value/12)*11)
+                  }
+                  else{
+                    this.tax[i].value= Math.floor(this.tax[i].value/12) 
+                  }
+                  }
+                  
+                  console.log(this.tax)
+                  for(i=0;i<this.employee.length;i++){this.all.push(this.tax[i],this.salary[i],this.ssf[i])}
+                  for(i=0;i<this.ot.length;i++){this.all.push(this.ot[i])}
+                  for(i=0;i<this.all.length;i++){
+                      for(a=0;a<this.slipMaster.length;a++){
+                        if(this.all[i].slipMasterId==this.slipMaster[a].slipMasterId){
+                            if(this.slipMaster[a].slipMasterType==1){
+                                this.earning.push(this.all[i])
+                            }
+                            else{
+                                this.deduction.push(this.all[i])
+                            }
+                        }
+                      }
+                  }
+                  for(i=0;i<this.employee.length;i++){
+                      var totalvalue=0;
+                      var totalvalue2=0;
+                      for(a=0;a<this.earning.filter(x=>x.employeeId==this.employee[i].employeeId).length;a++){
+                          totalvalue = this.earning.filter(x=>x.employeeId==this.employee[i].employeeId)[a].value+totalvalue
+                      }
+                      for(b=0;b<this.deduction.filter(x=>x.employeeId==this.employee[i].employeeId).length;b++){
+                          totalvalue2 = this.deduction.filter(x=>x.employeeId==this.employee[i].employeeId)[b].value+totalvalue2
+                      }
+                      this.totalearn.push(totalvalue)
+                      this.totaldeduct.push(totalvalue2)
+                  }
+                  for(i=0;i<this.employee.length;i++){
+                      for(a=0;a<this.earning.filter(x=>x.employeeId==this.employee[i].employeeId).length;a++){
+                          this.earning.filter(x=>x.employeeId==this.employee[i].employeeId)[a].slipMasterId = 
+                         this.slipMaster.filter(x=>x.slipMasterId==this.earning.filter(x=>x.employeeId==this.employee[i].employeeId)[a].slipMasterId)[0].slipMasterName
+                      }
+                      var p={
+                          employeeName   : this.employee[i].firstName+" "+this.employee[i].lastName,
+                          earnT          : this.earning.filter(x=>x.employeeId==this.employee[i].employeeId)
+
+                      }
+                      this.slip.push(p)
+                  }
+                  
+                  
+                  
+                }//ecreated
+                ,
+                methods:{
+                    
+                    
+                    
+                    detail_slip(item){
+                        var mound=this.date.split("-");
+                            var mound2={
+                            day:parseInt(mound[2]),
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                            }
+                            var a =parseInt(item.employeeId.toString()+"99"+mound2.month.toString())
+                            console.log(a)
+                        //window.location = '/slipsalary/slip/'+item.employeeId+"99"+mound2.month+"99"+mound2.year;
+                        window.location = '/slipsalary/slip/'+a;
+                    }
+                    ,
+                    save(){
+                      var mound=this.date.split("-");
+                            var mound2={
+                            day:parseInt(mound[2]),
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                            }
+                      for(i=0;i<this.employee.length;i++){
+                      var p = {
+                          employeeId            : this.employee[i].employeeId,
+                          Totalearning          : this.totalearn[i],
+                          Totaldeducttion       : this.totaldeduct[i],
+                          NetSalary             : this.totalearn[i]-this.totaldeduct[i],
+                          Month                 : mound2.month,
+                          Year                  : mound2.year
+                      }
+                      this.sender.push(p)
+                  }
+                 console.log(this.sender)
+                      var url = '/slipsalary/Edit';
+                        var param= this.sender;
+                        for(i=0;i<param.length;i++){
+                        $.post(url,param[i])
+                        .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/slipsalary/index';
+                          }
+                          else{ 
+                             alert(res.exception);
+                          }
+                    });
+                        }
+                    }
+                    ,
+                    PNDkor(){
+                         window.open("/slipsalary/export1", '_blank');
+                    }
+                    ,
+                     PND_K(){
+                         window.location ="/slipsalary/export1";
+                    } 
+                    ,
+                    PND(){
+                         window.open("/slipsalary/PND", '_blank');
+                    } 
+                    ,
+                     ssoreport(){
+                        window.location ="/slipsalary/ssoreport";
+                    }
+                    ,
+                     v50(){
+                       window.open("/slipsalary/v50", '_blank')
+                         
+                    } 
+                    ,
+                    tawi_50(){
+                      window.location ="/slipsalary/export4";
+                   }
+                   ,
+                   all_slip_mas(){
+                     window.location ="/slipmaster/index";
+                   }
+                   ,
+                   add_slip_mas(){
+                      window.location ="/slipmaster/add";
+                   }
+                  ,
+                  com(){
+                     window.location ="/managerinfo/index";
+                  }
+                  ,
+                   add_com(){
+                     window.location ="/managerinfo/add";
+                  }
+                  ,
+                    Bankreport(){
+                            var mound=this.date.split("-");
+                            var mound2={
+                            day:parseInt(mound[2]),
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        }
+                       window.location ="/slipsalary/BankReport/"+mound2.month;
+                    }
+                    ,
+                    selectdate(){
+                      function numberWithCommas(x) {
+                  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  }
+                      var mound=this.date.split("-");
+                        var mound2={
+                            day:parseInt(mound[2]),
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        }
+                        this.slipSalary=[]
+                        
+                        this.slipSalary=this.slipSalarys.filter(x=>x.month==mound2.month&&x.year==mound2.year)
+                   for(i=0;i<this.slipSalary.length;i++){
+                    this.slipSalary[i].totalearning=numberWithCommas((this.slipSalary[i].totalearning).toFixed(2))
+                    this.slipSalary[i].totaldeducttion=numberWithCommas((this.slipSalary[i].totaldeducttion).toFixed(2))
+                    this.slipSalary[i].netSalary=numberWithCommas((this.slipSalary[i].netSalary).toFixed(2))
+                   }
+                  console.log(this.slipSalarys)
+                    }
+                    
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

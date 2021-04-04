@@ -1,0 +1,113 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/currentsalary/index'>currentsalary</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>create</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+             <v-select return-object
+          v-model="select_employee"
+          :items="employees"
+          item-text="employeeId"
+          menu-props="auto"
+          single-line
+          label="employeeId"
+          show="employeeId" 
+           
+  ></v-select>
+
+ <v-select return-object
+          v-model="select_employeeSalaryMaster"
+          :items="employeeSalaryMasters"
+          item-text="employeeSalaryMasterId"
+          menu-props="auto"
+          single-line
+          label="employeeSalaryMasterId"
+          show="employeeSalaryMasterId" 
+           
+  ></v-select>
+
+<v-text-field v-model="currentsalary.currentSalaryAmount" label="currentSalaryAmount" ></v-text-field>
+
+<v-text-field v-model="currentsalary.month" label="month" ></v-text-field>
+
+<v-text-field v-model="currentsalary.year" label="year" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='add_currentsalary' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    currentsalary:{}
+                    ,
+                    employees:[] ,
+select_employee:{},
+employeeSalaryMasters:[] ,
+select_employeeSalaryMaster:{},
+
+                }//edata
+                ,
+                created(){
+                     this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+this.select_employee = this.employees[0];
+this.employeeSalaryMasters = @Html.Raw(Json.Serialize(@ViewBag.employeeSalaryMasters));
+this.select_employeeSalaryMaster = this.employeeSalaryMasters[0];
+
+                }//ecreated
+                ,
+                methods:{
+                  add_currentsalary(){
+                   this.currentsalary.employeeId = this.select_employee.employeeId;
+this.currentsalary.employeeSalaryMasterId = this.select_employeeSalaryMaster.employeeSalaryMasterId;
+
+                    var url = '/currentsalary/add';
+                    var param= this.currentsalary;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               //window.location = '/currentsalary/index';
+                               console.log(param)
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

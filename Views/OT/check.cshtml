@@ -1,0 +1,92 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             
+             <v-data-table
+             :headers ='headers'
+             :items   ='startTimes'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_clocking(item)"
+                        >
+                           BACK
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   clockings:[],ot:[], clocking:[],startTimes:[]
+                   ,
+                   headers:[
+
+                      {text:'employeeId',value:'employeeId',align:'center',sortable:true},
+                      {text:'clockingIn',value:'clockingIn',align:'center',sortable:true},
+                      {text:'breakIn',value:'breakIn',align:'center',sortable:true},
+                      {text:'breakOut',value:'breakOut',align:'center',sortable:true},
+                      {text:'clockingOut',value:'clockingOut',align:'center',sortable:true},
+                      {text:'Date',value:'date',align:'center',sortable:true},
+                      {text:'',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                    this.ot = @Html.Raw(Json.Serialize(@ViewBag.ot));
+                    this.clocking = @Html.Raw(Json.Serialize(@ViewBag.clockings));
+                    this.employees = @Html.Raw(Json.Serialize(@ViewBag.employees));
+                    this.select_employee = @Html.Raw(Json.Serialize(@ViewBag.select_employee));
+                     console.log(this.ot)
+                     
+                    this.clockings = this.clocking.filter(x=>x.employeeId==this.ot.employeeId);
+                    for(i=0;i<this.clockings.length;i++){
+                    var Time = this.clockings[i].clockingIn.split(":");
+                    var TimeSelect = this.ot.oTStart.split(":");
+                        if(Time[0]==TimeSelect[0]){
+                        this.startTimes.push(this.clockings[i]);
+                        }
+                    }                      
+                     console.log(this.clocking)
+                     console.log(this.clockings)
+                     console.log(this.startTimes)
+                     
+                   
+
+                }//ecreated
+                ,
+                methods:{
+                    
+                    
+                    edit_clocking(item){
+                        window.location = '/OT/index/';
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

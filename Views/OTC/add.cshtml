@@ -1,0 +1,96 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/otc/index'>otc</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>create</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+             <v-select return-object
+          v-model="select_oT"
+          :items="oTs"
+          item-text="oTId"
+          menu-props="auto"
+          single-line
+          label="oTId"
+          show="oTId" 
+           
+  ></v-select>
+
+<v-text-field v-model="otc.value" label="value" ></v-text-field>
+
+<v-text-field v-model="otc.month				" label="month" ></v-text-field>
+
+<v-text-field v-model="otc.years" label="years" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='add_otc' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    otc:{}
+                    ,
+                    oTs:[] ,
+select_oT:{},
+
+                }//edata
+                ,
+                created(){
+                     this.oTs = @Html.Raw(Json.Serialize(@ViewBag.oTs));
+this.select_oT = this.oTs[0];
+
+                }//ecreated
+                ,
+                methods:{
+                  add_otc(){
+                   this.otc.oTId = this.select_oT.oTId;
+
+                    var url = '/otc/add';
+                    var param= this.otc;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/otc/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

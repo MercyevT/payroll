@@ -1,0 +1,169 @@
+
+
+<div id='app1' v-cloak>
+
+    <v-app style="background-color:#EDF1F2;">
+        <v-main>
+               <v-card>
+            <v-navigation-drawer
+                    permanent
+                    :mini-variant.sync="mini"
+                    fixed
+                    app
+                    style="background-color:#002952"
+                    >
+                    <v-list
+                    nav
+                    dense
+                    >
+                    <v-btn
+                    icon
+                    @@click.stop="mini = !mini"
+                    >
+                    <v-icon style="color:white">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-list-item @@click='all_ot' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-timer</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">OVERTIME</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='import_ot'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-import</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">IMPORT</v-list-item-title>
+                    </v-list-item>
+
+                     <v-list-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                               <v-list-item-icon>
+                              <v-icon style="color:white">mdi-file-document</v-icon>
+                              </v-list-item-icon>
+                            <v-list-item-title  style="color:white">OVERTIME RATE</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='all_rate'>
+                                <v-list-item-title  style="color:white">ALL RATE</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='add_rate'>
+                                <v-list-item-title style="color:white">NEW RATE</v-list-item-title>
+                            </v-list-item>
+                        </v-list-group>
+
+                </v-navigation-drawer>
+                </v-card>	
+
+        <v-card class="size">
+         <v-card-title class="white--text" style="background-color:#001f3d;">
+                        <h3 style="text-align: center">IMPORT OVERTIME INFORMATON</h3>
+        </v-card-title>    
+        <v-file-input
+           label="file"
+            v-model="file1"
+        style="margin:10px"
+        ></v-file-input>
+        <v-btn
+         @@click='upload'
+          rounded
+         style="color:white; background-color:#001f3d; margin:10px"
+        >
+            <v-icon style="color:white">
+              mdi-import
+            </v-icon>
+            import
+        </v-btn>
+ </v-card>
+        </v-main>
+    </v-app>
+</div>
+<style>
+.navm{
+    color:white;
+}
+.v-text-field{
+    font-size:20px;
+}
+.size{
+    margin:20px;
+}
+</style>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    file1:null
+                ,
+                   list1:[],
+                   mini:true,
+                }
+                ,
+                
+                created(){
+          
+                }
+                ,
+                methods:{
+                    upload(){
+        // Create an FormData object 
+        var data = new FormData();
+        data.append("file1",this.file1);
+        console.log(data);
+                        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "/ot/importFile4",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+
+                
+                console.log("SUCCESS : ", data);
+ 
+            },
+            error: function (e) {
+
+                $("#result").text(e.responseText);
+                console.log("ERROR : ", e);
+                $("#btnSubmit").prop("disabled", false);
+
+            }
+        });
+                    }//ef
+                    ,
+                    import_ot(item){
+                        window.location= '/ot/importview';
+                    }
+                    ,
+                    all_ot(){
+                        window.location= '/ot/index';
+                    }
+                    ,
+                    all_rate(){
+                        window.location= '/otrate/index';
+                    }
+                    ,
+                    add_rate(){
+                        window.location= '/otrate/add';
+                    }
+                }//emethod
+                ,
+                 computed:{
+
+                 }
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

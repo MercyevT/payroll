@@ -1,0 +1,126 @@
+
+<div id='app1' v-cloak>
+
+    <v-app style="background-color:#EDF1F2;">
+        <v-main>
+              <v-card>
+            <v-navigation-drawer
+                    permanent
+                    :mini-variant.sync="mini"
+                    fixed
+                    app
+                    style="background-color:#002952"
+                    >
+                    <v-list
+                    nav
+                    dense
+                    >
+                    <v-btn
+                    icon
+                    @@click.stop="mini = !mini"
+                    >
+                    <v-icon style="color:white">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-list-item @@click='clocking_p' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-timetable</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">CLOCKING</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='clocking_i'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-import</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title style="color:white">IMPORT</v-list-item-title>
+                    </v-list-item>
+                </v-navigation-drawer>
+                </v-card>	
+        <v-card class="size">
+         <v-card-title class="white--text" style="background-color:#001f3d;">
+                        <h3 style="text-align: center">IMPORT EMPLOYEE Clocking</h3>
+        </v-card-title>
+        <br>
+        <v-file-input
+           label="file"
+            v-model="file1"
+        ></v-file-input>
+        <v-btn
+         @@click='upload'
+        >
+            <v-icon>
+              mdi-import
+            </v-icon>
+            import
+        </v-btn>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    file1:null
+                ,
+                   list1:[],
+                   mini:true,
+                }
+                ,
+                created(){
+          
+                }
+                ,
+                methods:{
+                    upload(){
+        // Create an FormData object 
+        var data = new FormData();
+        data.append("file1",this.file1);
+        console.log(data);
+                        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "/clocking/importFile4",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+
+                
+                console.log("SUCCESS : ", data);
+ 
+            },
+            error: function (e) {
+
+                $("#result").text(e.responseText);
+                console.log("ERROR : ", e);
+                $("#btnSubmit").prop("disabled", false);
+
+            }
+        });
+                    }//ef
+                     ,
+                      clocking_p(){
+                        window.location='/clocking/index'
+                      }
+                      ,
+                      clocking_i(){
+                         window.location='/clocking/importview'
+                      }
+                }//emethod
+                ,
+                 computed:{
+
+                 }
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

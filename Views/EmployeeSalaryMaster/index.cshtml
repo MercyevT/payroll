@@ -1,0 +1,87 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_employeesalarymaster'
+             >
+                 <v-icon>
+                   mdi-plus
+                 </v-icon>
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='employeeSalaryMasters'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_employeesalarymaster(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   employeeSalaryMasters:[]
+                   ,
+                   headers:[
+
+                      {text:'departmentId',value:'departmentId',align:'center',sortable:true},
+
+                      {text:'position',value:'position',align:'center',sortable:true},
+                      {text:'employeestatus',value:'employeestatus',align:'center',sortable:true},
+                      {text:'basicSalary',value:'basicSalary',align:'center',sortable:true},
+                      {text:'salaryRate',value:'salaryRate',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.employeeSalaryMasters = @Html.Raw(Json.Serialize(@ViewBag.employeeSalaryMasters));
+                }//ecreated
+                ,
+                methods:{
+                    add_employeesalarymaster(){
+                        window.location= '/employeesalarymaster/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_employeesalarymaster(item){
+                        window.location = '/employeesalarymaster/edit/'+item.employeeSalaryMasterId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

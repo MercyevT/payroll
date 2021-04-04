@@ -1,0 +1,382 @@
+
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+          <v-container>
+          <v-row justify="space-around">
+             <v-btn
+              @@click='add_clocking'
+             >
+                 Import Clocking    
+             </v-btn>
+             <div style="width: 200px;">
+             <v-select
+          :items="department"
+          label="Department"
+          dense
+          v-model="depart"
+        ></v-select>
+        </div>
+             <div style="width: 200px;">
+             <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :return-value.sync="date"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="date"
+            label="Date:"
+            
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="date"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="primary"
+            @@click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @@click="$refs.menu.save(date);"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+      </div>
+      <v-btn
+              @@click='add_data'
+             >
+                 Search    
+             </v-btn>
+             <template>
+  <div>
+    <v-menu
+      v-model="menu2"
+      :close-on-content-click="false"
+      :nudge-width="200"
+      offset-y
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          
+          v-bind="attrs"
+          v-on="on"
+        >
+          Setting
+        </v-btn>
+      </template>
+
+      <v-card>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title>Late allowance :</v-list-item-title>   
+            <div style="position: absolute; left: 175px;">
+            <input type="number" min="1" max="60" style="border: 2px solid black;" v-model="on"> minute
+            </div>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-title>Late :</v-list-item-title>
+            <div style="position: absolute; left: 175px;">
+            <input type="number" min="1" max="60" style="border: 2px solid black;" v-model="late"> minute
+            </div>
+          </v-list-item>
+        </v-list>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            text
+            @@click="menu2 = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @@click="menu2 = false;check();"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-menu>
+  </div>
+</template>
+      </v-row>
+      </v-container>
+      <v-col cols="12">
+            <v-card class="ma-2">
+                    <v-card-title class="primary white--text">
+                        <h3 style="text-align: center">Employee Attendance Time</h3>
+                    </v-card-title>
+                    <v-card-text>
+                    <v-chart :options="plot" style="width: 100%; height: 500px;"/>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+             
+             <v-data-table
+             :headers ='headers'
+             :items   ='clocking'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_clocking(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+      Vue.component('v-chart', VueECharts);
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   clockings:[],workingTimes:[],clocking:[],onTime:[],LastTime:[],departments:[],department:["All"],depart:" ",work1:[],work2:[],work3:[]
+                   ,
+                   headers:[
+
+                      {text:'Employee Name',value:'employeeName',align:'left',sortable:true},
+                      {text:'Time In',value:'clockingIn',align:'left',sortable:true},
+                      {text:'Break In',value:'breakIn',align:'left',sortable:true},
+                      {text:'Break Out',value:'breakOut',align:'left',sortable:true},
+                      {text:'Time Out',value:'clockingOut',align:'left',sortable:true},
+                      {text:'Date',value:'date',align:'left',sortable:true},
+                      
+
+					          ],
+                    itemX:["on Time"," "," "],
+                    itemY:[],
+                    date: new Date().toISOString().substr(0, 10),
+                    menu: false,
+                    menu2: false,
+                    on:5,
+                    late:10,
+                    
+                    plot: {
+                        toolbox: {
+                            show: true,
+                            feature: {
+                                dataView: {
+                                    show: true,
+                                    readOnly: false,
+                                    title: 'Data View'
+                                },
+                                magicType: {
+                                    show: true,
+                                    type: ['line', 'bar'],
+                                    title: {
+                                        line: "Line",
+                                        bar: "Bar",
+                                    }
+                    
+                                },
+                                restore: {
+                                    show: true,
+                                    title: 'restore'
+                                },
+                                saveAsImage: {
+                                    show: true,
+                                    title: 'save image'
+                                }
+                            }
+                        },
+                        title: {
+                            text: 'Employees Clocking Summary',
+                            subtext:[]
+                        },
+                        tooltip: {},
+                        legend: {
+                            data: ['Employees'],
+                        },
+                        xAxis: {
+                            data: [],
+                            axisLabel: {
+                                
+                                textStyle: {
+                                    color: '#4b2c20'
+                                }
+                            },
+                    
+                            axisTick: {
+                                show: false
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                            z: 10
+                        },
+                        yAxis: [
+                            {
+                                type: 'value'
+                            }
+                        ]
+                    }
+                }//edata
+                ,
+                created(){
+                    this.clockings = @Html.Raw(Json.Serialize(@ViewBag.clockings));
+                    this.workingTimes = @Html.Raw(Json.Serialize(@ViewBag.workingTimes));
+                    this.departments = @Html.Raw(Json.Serialize(@ViewBag.departments));
+                    this.clocking =  this.clockings;   
+                    console.log(this.workingTimes);
+                    console.log(this.clocking);
+                    
+
+                    for(i=0;i<this.departments.length;i++){
+                        this.department.push(this.departments[i].departmentName)
+                    }
+                    
+                    
+                }//ecreated
+                ,
+                methods:{
+                    add_clocking(){
+                        window.location= '/clocking/importview';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_clocking(item){
+                        window.location = '/clocking/edit/'+item.clockingId;
+                    }
+                    ,
+                    add_data(){
+                      this.work1=[];  
+                       this.work2=[];
+                       this.work3=[];
+                       this.itemX=["On Time(Less than "+this.on+" minutes) ","Less than "+this.late+" minutes","more than "+this.late+" minutes"];
+                       this.itemY=[];
+                        console.log(this.date)
+                        var mound=this.date.split("-");
+                        var mound2={
+                            day:parseInt(mound[2]) ,
+                            month:parseInt(mound[1]),
+                            year:parseInt(mound[0])
+                        }
+                        if(this.depart=="All"||this.depart==" "){
+                        this.clocking=this.clockings.filter(x=>x.date==mound2.day+"/"+mound2.month+"/"+mound2.year)
+                        }
+                        else{
+                          this.clocking=this.clockings.filter(x=>x.date==mound2.day+"/"+mound2.month+"/"+mound2.year&&x.department==this.depart)
+                        }
+                        console.log(mound2.day+"/"+mound2.month+"/"+mound2.year)
+                        console.log(this.depart)
+                        for(i=0;i<this.clocking.length;i++){
+                          for(a=0;a<this.workingTimes.length;a++){
+                          if(this.clocking[i].departmentId==this.workingTimes[a].departmentId
+                              &&this.clocking[i].clockingIn.split(":")[0]==this.workingTimes[a].start.split(":")[0]
+                              &&parseInt(this.clocking[i].clockingIn.split(":")[1])<=this.on
+                              ){
+                            this.work1.push(this.clocking[i])
+                          }
+                          else if(this.clocking[i].departmentId==this.workingTimes[a].departmentId
+                              &&this.clocking[i].clockingIn.split(":")[0]==this.workingTimes[a].start.split(":")[0]
+                              &&parseInt(this.clocking[i].clockingIn.split(":")[1])<=this.late
+                              ){
+                            this.work2.push(this.clocking[i])
+                          }
+                          else if(this.clocking[i].departmentId==this.workingTimes[a].departmentId
+                              &&this.clocking[i].clockingIn.split(":")[0]==this.workingTimes[a].start.split(":")[0]
+                              &&parseInt(this.clocking[i].clockingIn.split(":")[1])>this.late
+
+                          ){
+                            this.work3.push(this.clocking[i])
+                          }
+                          }
+                        }
+                        this.work1.sort((a,b) => { 
+					              if(a.employeeId > b.employeeId) return 1;
+					              else if(a.employeeId == b.employeeId) return 0; 
+					              else return -1;
+				                });
+                        this.work2.sort((a,b) => { 
+					              if(a.employeeId > b.employeeId) return 1;
+					              else if(a.employeeId == b.employeeId) return 0; 
+					              else return -1;
+				                });
+                        this.work3.sort((a,b) => { 
+					              if(a.employeeId > b.employeeId) return 1;
+					              else if(a.employeeId == b.employeeId) return 0; 
+					              else return -1;
+				                });
+                          console.log(this.work1)
+                          console.log(this.work2)
+                          console.log(this.work3)
+                          this.itemY=[this.work1.length,this.work2.length,this.work3.length]
+                          console.log(this.itemX)
+                          console.log(this.itemY)
+                          this.plot.title.text  = "Employees Clocking Summary"+"("+this.date+")";
+                          this.plot.title.subtext = "Department :"+this.depart;
+                          this.plot.xAxis.data = this.itemX;
+                    this.plot.series=[{
+                            name: 'value',
+                            type: 'bar',
+                            label: {
+                            show: true,
+                            position: 'top'
+                            },
+                            data: this.itemY,
+                            itemStyle: { color: '#4594E3'
+                            }
+                        }];
+                    console.log(this.plot);
+                    }
+                    ,
+                    check(){
+                            console.log(this.on)
+                            this.itemX[1]="Less than "+this.late+" minutes"
+                            this.itemX[2]="more than "+this.late+" minutes"
+                            console.log(this.itemX)
+                        }
+                    
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

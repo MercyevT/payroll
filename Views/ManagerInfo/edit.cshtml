@@ -1,0 +1,86 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/managerinfo/index'>managerinfo</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>edit</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field v-model="managerinfo.managerInfoFname" label="managerInfoFname" ></v-text-field>
+
+<v-text-field v-model="managerinfo.managerInfoLname" label="managerInfoLname" ></v-text-field>
+
+<v-text-field v-model="managerinfo.managerCZId	" label="managerCZId" ></v-text-field>
+
+<v-text-field v-model="managerinfo.managerAddress	" label="managerAddress" ></v-text-field>
+
+<v-text-field v-model="managerinfo.managerCode		" label="managerCode" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='edit_managerinfo' color='yellow' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    managerinfo:{}
+                    ,
+                    
+                }//edata
+                ,
+                created(){
+                  this.managerinfo = @Html.Raw(Json.Serialize(@ViewBag.managerinfo));
+                     
+                     
+                }//ecreated
+                ,
+                methods:{
+                  edit_managerinfo(){
+                   
+                    var url = '/managerinfo/edit';
+                    var param= this.managerinfo;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/managerinfo/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

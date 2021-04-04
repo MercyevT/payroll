@@ -1,0 +1,98 @@
+<nav aria-label='breadcrumb'>
+    <ol class='breadcrumb breadcrumb-arrow'>
+        <li class='breadcrumb-item'><a href='/employeesalarymaster/index'>employeesalarymaster</a></li>
+        <li class='breadcrumb-item active' aria-current='page'>create</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+         
+        <v-card>
+          <v-card-title>
+          </v-card-title>
+          <v-card-text>
+             <v-select return-object
+          v-model="select_department"
+          :items="departments"
+          item-text="departmentName"
+          menu-props="auto"
+          single-line
+          label="departmentId"
+          show="departmentName" 
+           
+  ></v-select>
+
+<v-text-field v-model="employeesalarymaster.position" label="Position" ></v-text-field>
+
+<v-text-field v-model="employeesalarymaster.employeestatus" label="employeestatus" ></v-text-field>
+
+<v-text-field v-model="employeesalarymaster.basicSalary" label="Basic Salary" ></v-text-field>
+
+<v-text-field v-model="employeesalarymaster.salaryRate" label="SalaryRate" ></v-text-field>
+
+
+          </v-card-text>
+          <v-card-actions>
+             <v-btn @@click='add_employeesalarymaster' color='blue' outlined>
+                <v-icon>
+                    mdi-content-save-edit
+                </v-icon>
+             </v-btn>
+          </v-card-actions>
+          
+        </v-card>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    employeesalarymaster:{}
+                    ,
+                    departments:[] ,
+select_department:{},
+
+                }//edata
+                ,
+                created(){
+                     this.departments = @Html.Raw(Json.Serialize(@ViewBag.departments));
+this.select_department = this.departments[0];
+
+                }//ecreated
+                ,
+                methods:{
+                  add_employeesalarymaster(){
+                   this.employeesalarymaster.departmentId = this.select_department.departmentId;
+
+                    var url = '/employeesalarymaster/add';
+                    var param= this.employeesalarymaster;
+                    $.post(url,param)
+                    .done(res =>{
+                          if(res.error == -1){
+                               window.location = '/employeesalarymaster/index';
+                          }
+                          else{
+                             alert(res.exception);
+                          }
+                    });
+                    
+                  }//emethod
+
+                }//emethod
+                ,
+                 computed:{
+
+                 }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

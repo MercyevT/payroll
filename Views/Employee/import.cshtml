@@ -1,0 +1,213 @@
+
+<div id='app1' v-cloak>
+
+    <v-app style="background-color:#EDF1F2;">
+        <v-main>
+                <v-card>
+            <v-navigation-drawer
+                    permanent
+                    :mini-variant.sync="mini"
+                    fixed
+                    app
+                    style="background-color:#002952"
+                    >
+                    <v-list
+                    nav
+                    dense
+                    >
+                    <v-btn
+                    icon
+                    @@click.stop="mini = !mini"
+                    >
+                    <v-icon style="color:white">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <v-list-item @@click='all_info' >
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-view-list</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">ALL EMPLOYEES</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='add_page'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-account-multiple-plus</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">NEW EMPLOYEE</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @@click='import_emp'>
+                        <v-list-item-icon>
+                        <v-icon style="color:white">mdi-file-import</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title  class="navm">IMPORT</v-list-item-title>
+                    </v-list-item>
+
+                    <!---list group--->
+                    <v-list-group
+                    prepend-icon="mdi-settings" 
+                    >
+                    <v-list-item slot="activator" >
+                        <v-list-item-title  class="navm">SETTING</v-list-item-title>
+                    </v-list-item>
+
+                      <v-list-group
+                            sub-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                            <v-list-item-title  class="navm">DEPARTMENTS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='dep_page'>
+                                <v-list-item-title  class="navm">ALL DEPARTMENTS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='dep_add_page'>
+                                <v-list-item-title  class="navm">NEW DEPARTMENT</v-list-item-title>
+                            </v-list-item>
+                        </v-list-group>
+
+                         <v-list-group
+                            sub-group
+                            no-action
+                        >
+                            <v-list-item slot="activator">
+                            <v-list-item-title  class="navm">BANK</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='bank_page'>
+                                <v-list-item-title  class="navm">ALL BANKS</v-list-item-title>
+                            </v-list-item>
+                            <v-list-item @@click='bank_add_page' >
+                                <v-list-item-title  class="navm">NEW BANK</v-list-item-title>                 
+                            </v-list-item>
+                        </v-list-group>
+
+                        </v-list-group>
+                </v-navigation-drawer>
+                </v-card>	
+
+        <v-card class="size">
+         <v-card-title class="white--text" style="background-color:#001f3d;">
+                        <h3 style="text-align: center">IMPORT EMPLOYEE INFORMATION</h3>
+        </v-card-title>
+        <br>
+        <v-file-input
+           label="File"
+            v-model="file1"
+            style="margin:10px"
+        ></v-file-input>
+        
+        <v-btn
+         @@click='upload'
+         rounded
+         style="color:white; background-color:#001f3d; margin:10px"
+        >
+            <v-icon style="color:white">
+              mdi-import
+            </v-icon>
+            import
+        </v-btn>
+        <br><br>
+        </v-card>
+        </v-main>
+    </v-app>
+</div>
+<style>
+.navm{
+    color:white;
+}
+.v-text-field{
+    font-size:20px;
+}
+.size{
+    margin:20px;
+}
+</style>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+                    file1:null
+                ,
+                   list1:[]
+                ,
+                mini:true
+                }
+                ,
+                created(){
+          
+                }
+                ,
+                methods:{
+                    upload(){
+        // Create an FormData object 
+        var data = new FormData();
+        data.append("file1",this.file1);
+        console.log(data);
+                        $.ajax({
+            type: "POST",
+            enctype: 'multipart/form-data',
+            url: "/employee/importFile",
+            data: data,
+            processData: false,
+            contentType: false,
+            cache: false,
+            timeout: 600000,
+            success: function (data) {
+
+                
+                console.log("SUCCESS : ", data);
+ 
+            },
+            error: function (e) {
+
+                $("#result").text(e.responseText);
+                console.log("ERROR : ", e);
+                $("#btnSubmit").prop("disabled", false);
+
+            }
+        });
+                    }//ef
+                    ,
+                      add_page(){
+                        window.location= '/employee/add';     
+                    }//ef
+                    ,
+                    all_info(){
+                        window.location ='/employee/index';
+                    }//ef
+                    ,
+                   
+                    import_emp(){
+                        window.location='/employee/importview';
+                    }
+                    ,
+                    dep_page(){
+                        window.location='/department/index'
+                    }
+                    ,
+                    dep_add_page(){
+                        window.location='/department/add'
+                    }
+                    ,
+                    bank_page(){
+                        window.location='/bank/index'
+                    }
+                    ,
+                    bank_add_page(){
+                        window.location='/bank/add'
+                    }
+                    ,
+                }//emethod
+                ,
+                 computed:{
+
+                 }
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}

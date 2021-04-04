@@ -1,0 +1,88 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-arrow">
+        <li class="breadcrumb-item active" aria-current="page">sSFRate</li>
+    </ol>
+</nav>
+<div id='app1' v-cloak>
+
+    <v-app>
+        <v-main>
+             <v-btn
+              @@click='add_ssfrate'
+             >
+                 <v-icon>
+                   mdi-plus
+                 </v-icon>
+                 
+             </v-btn>
+             <v-data-table
+             :headers ='headers'
+             :items   ='sSFRates'
+              class='elevation-1'
+             />
+                  <template v-slot:item.actions='{item}'>
+                        <v-btn 
+                        class="white--text"
+                        color="blue darken-1"
+                        @@click="edit_ssfrate(item)"
+                        >
+                            <v-icon>
+                            mdi-pencil
+                            </v-icon>
+                            
+                        </v-btn>
+                </template>
+             </v-data-table>
+        </v-main>
+    </v-app>
+</div>
+@section scripts{
+    <script>
+        var app;
+            var component = {
+                vuetify: new Vuetify()
+                ,
+                el:'#app1'
+                ,
+                data:{
+              
+                   sSFRates:[]
+                   ,
+                   headers:[
+
+                      {text:'SocialSecurityFundRate',value:'SocialSecurityFundRate',align:'center',sortable:true},
+                      {text:'month					',value:'month					',align:'center',sortable:true},
+                      {text:'year						',value:'year						',align:'center',sortable:true},
+                      {text:'actions',value:'actions',align:'center',sortable:true}
+
+					]
+                }//edata
+                ,
+                created(){
+                  this.sSFRates = @Html.Raw(Json.Serialize(@ViewBag.sSFRates));
+                }//ecreated
+                ,
+                methods:{
+                    add_ssfrate(){
+                        window.location= '/ssfrate/add';
+                  
+                        
+                    }//ef
+                    
+                    ,
+                    edit_ssfrate(item){
+                        window.location = '/ssfrate/edit/'+item.sSFRateId;
+                    }
+
+                }//emethods
+                ,
+                computed:{
+
+                }//ecomputed
+            };
+            app = new Vue(component);
+
+
+    </script>
+
+}
